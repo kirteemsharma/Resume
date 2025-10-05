@@ -10,19 +10,25 @@ export default function ResumeUpload() {
   };
 
   const onUpload = async () => {
-    if (!files.length) return setStatus('Please select at least one file!');
+    if (files.length === 0) {
+      setStatus('Please select at least one file!');
+      return;
+    }
 
     setStatus('Uploading files...');
     const formData = new FormData();
     files.forEach((file) => formData.append('files', file));
 
     try {
-      const res = await fetch('/api/resumes', {
+      const response = await fetch('http://localhost:4000/api/resumes', {
         method: 'POST',
-        body: formData
+        body: formData,
       });
 
-      if (!res.ok) throw new Error('Upload failed');
+      if (!response.ok) {
+        throw new Error('Upload failed with status ' + response.status);
+      }
+
       setStatus('Files uploaded successfully!');
       setFiles([]);
     } catch (err) {
